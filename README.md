@@ -37,3 +37,26 @@ This script is used to run the ``sandreas/m4b-tool`` Docker container.
 This will create an .M4B audiobook file named.
 
 > The Teaching Company - The Odyssey Of Homer.m4b
+
+## Format of the makebook.ps1 script
+
+The Powershell file will be similar to the following file.
+
+```bash
+$directory = "${PWD}/audiobooks"
+$files = Get-ChildItem -Path $directory -Filter *.mp3 | Sort-Object Name
+$dockerCommand = "docker run -it --rm -v ""${PWD}/audiobooks:/mnt"" sandreas/m4b-tool:latest merge"
+
+foreach ($file in $files) {
+ $dockerCommand += " ""/mnt/$($file.Name)"""
+
+# Write-Host " ""/mnt/$($file.Name)"""
+}
+
+$dockerCommand += " --output-file ""/mnt/The Teaching Company - The Odyssey Of Homer.m4b"" --series """" --name=""The Teaching Company - The Odyssey Of Homer"" --series-part=1 --artist ""The Teaching Company"" --albumartist=""The Teaching Company"" --use-filenames-as-chapters --cover ""/mnt/cover.jpg"" --jobs=8 --audio-channels=2 --audio-samplerate=44100"
+
+#Write-Host $dockerCommand
+
+# Execute the command
+Invoke-Expression $dockerCommand
+```
